@@ -1,6 +1,7 @@
 import tkinter
 from socket import AF_INET, socket, SOCK_STREAM
 from threading import Thread
+import time
 
 f = open('order', 'r')
 nr = int(f.read())
@@ -14,6 +15,9 @@ def receive():
         try:
             msg = client_socket.recv(size).decode("utf8")
             messages.insert(tkinter.END, msg)
+            if msg == 'Connection refused':
+                time.sleep(2)
+                on_closing()
         except OSError:
             break
 

@@ -13,6 +13,9 @@ def accept_connections():
 
 def client_communication(client_socket):
     name = client_socket.recv(size).decode('utf8')
+    if name not in allowed_clients:
+        client_socket.send(bytes('Connection refused', 'utf8'))
+        return
     welcome = 'Welcome %s! To leave, type !q' % name
     client_socket.send(bytes(welcome, 'utf8'))
     msg = '%s has joined the chat!' % name
@@ -42,6 +45,7 @@ size = 512
 addr = (host, port)
 clients = {}
 addresses = {}
+allowed_clients = ['tester', 'admin', 'guest']
 
 
 server = socket(AF_INET, SOCK_STREAM)
@@ -52,7 +56,7 @@ orderNr.write(str(1))
 orderNr.close()
 
 server.listen(5)
-print('The chat is open')
+print('The chat is open ...')
 handle_connections = Thread(target=accept_connections())
 handle_connections.start()
 handle_connections.join()
